@@ -1,0 +1,52 @@
+A data blob can be up to 1 MB.
+default retention period - 24 hrs
+max retention period - 7 days
+Shard iterators have a valid lifetime of 300 seconds
+
+1. Create kinesis stream
+
+aws kinesis create-stream --stream-name Foo --shard-count 1
+
+2. Describe stream
+
+aws kinesis describe-stream --stream-name Foo
+
+3. List streams
+
+aws kinesis list-streams
+
+4. Put a Record
+
+aws kinesis put-record --stream-name Foo --partition-key 123 --data testdata
+
+5. Get shared iterator
+
+aws kinesis get-shard-iterator --shard-id shardId-000000000000 --shard-iterator-type TRIM_HORIZON --stream-name Foo
+
+Outputs Like 
+
+{
+    "ShardIterator": "AAAAAAAAAAHSywljv0zEgPX4NyKdZ5wryMzP9yALs8NeKbUjp1IxtZs1Sp+KEd9I6AJ9ZG4lNR1EMi+9Md/nHvtLyxpfhEzYvkTZ4D9DQVz/mBYWRO6OTZRKnW9gd+efGN2aHFdkH1rJl4BL9Wyrk+ghYG22D2T1Da2EyNSH1+LAbK33gQweTJADBdyMwlo5r6PqcP2dzhg="
+}
+
+6. Get Record using ShardIterator
+
+
+aws kinesis get-records --shard-iterator AAAAAAAAAAHSywljv0zEgPX4NyKdZ5wryMzP9yALs8NeKbUjp1IxtZs1Sp+KEd9I6AJ9ZG4lNR1EMi+9Md/nHvtLyxpfhEzYvkTZ4D9DQVz/mBYWRO6OTZRKnW9gd+efGN2aHFdkH1rJl4BL9Wyrk+ghYG22D2T1Da2EyNSH1+LAbK33gQweTJADBdyMwlo5r6PqcP2dzhg=
+
+Output is like
+
+{
+  "Records":[ {
+    "Data":"dGVzdGRhdGE=",
+    "PartitionKey":"123”,
+    "ApproximateArrivalTimestamp": 1.441215410867E9,
+    "SequenceNumber":"49544985256907370027570885864065577703022652638596431874"
+  } ],
+  "MillisBehindLatest":24000,
+  "NextShardIterator":"AAAAAAAAAAEDOW3ugseWPE4503kqN1yN1UaodY8unE0sYslMUmC6lX9hlig5+t4RtZM0/tALfiI4QGjunVgJvQsjxjh2aLyxaAaPr+LaoENQ7eVs4EdYXgKyThTZGPcca2fVXYJWL3yafv9dsDwsYVedI66dbMZFC8rPMWc797zxQkv4pSKvPOZvrUIudb8UkH3VMzx58Is="
+}
+
+7. Delete Stream
+
+aws kinesis delete-stream --stream-name Foo
